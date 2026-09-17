@@ -1,0 +1,47 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <h1>Library</h1>
+    <div class="d-flex flex-row mb-3 p-3 flex-wrap gap-3">
+        <% for(book of books){ %>
+            
+            <p><%= book.title %></p>
+            <p><%= book.slug %></p>
+        </br>
+            
+        <% } %>
+    </div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+
+</script>
+<script>
+    function downloadFile(slug) {
+
+// 1. Construct the path to the file inside the uploads folder
+const filePath = `uploads/${slug}.pdf`;
+
+// 2. Create a temporary anchor element
+const downloadLink = document.createElement('a');
+downloadLink.href = filePath;
+
+// 3. Force the browser to download instead of opening it in the PDF viewer
+downloadLink.download = `${sslug}.pdf`; 
+
+// 4. Append to body, trigger the click (works for touch events too), and remove
+document.body.appendChild(downloadLink);
+downloadLink.click();
+document.body.removeChild(downloadLink);
+
+}
+
+// Example usage:
+// downloadFile('Hello, world!', 'example.txt', 'text/plain');
+
+</script>
+</html>
