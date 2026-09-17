@@ -1,47 +1,282 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Library</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #000000;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        /* Aligned in middle of page with space on left and right */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        /* Left-top option for fuzzy search */
+        .site-heading {
+            color: #000000;
+            font-weight: bold;
+            font-size: 28px;
+            text-align: left;
+            margin: 0 0 16px 0;
+        }
+
+        .search-container {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 260px;
+            max-width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            border: 1px solid #000000;
+            background-color: #ffffff;
+            color: #000000;
+            outline: none;
+        }
+
+        .search-input:focus {
+            outline: 1px solid #000000;
+        }
+
+        /* Simple linear tab bar containing category tags */
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            border-bottom: 1px solid #000000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: #000000;
+            padding: 5px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            text-decoration: underline;
+        }
+
+        .tab-btn.active {
+            border: 1px solid #000000;
+            font-weight: bold;
+        }
+
+        /* Book display list table with aligned th, margin, and padding */
+        .book-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .book-table th {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 2px solid #000000;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .book-table td {
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .col-sr {
+            width: 80px;
+        }
+
+        .col-slug {
+            width: auto;
+        }
+
+        .col-tag {
+            width: 120px;
+        }
+
+        /* Display list with black links that turn blue on hover */
+        .book-link {
+            color: #000000;
+            text-decoration: none;
+        }
+
+        .book-link:hover {
+            color: #0000ee;
+            text-decoration: underline;
+        }
+
+        .no-results {
+            display: none;
+            padding: 24px 14px;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Library</h1>
-    <div class="d-flex flex-row mb-3 p-3 flex-wrap gap-3">
-        <% for(book of books){ %>
-            
-            <p><%= book.title %></p>
-            <p><%= book.slug %></p>
-        </br>
-            
-        <% } %>
+
+    <div class="container">
+        <h1 class="site-heading">books lib</h1>
+        <!-- Top Left Option for Fuzzy Search -->
+        <div class="search-container">
+            <input 
+                type="text" 
+                id="fuzzySearch" 
+                class="search-input" 
+                placeholder="Fuzzy search by indexing or tag..." 
+                autocomplete="off"
+            />
+        </div>
+
+        <!-- Linear tab bar containing category tags -->
+        <nav class="tab-bar">
+            <button class="tab-btn active" data-tag="all">all</button>
+            <% if (tags && tags.length) { %>
+                <% tags.forEach(function(tag) { %>
+                    <button class="tab-btn" data-tag="<%= tag.toLowerCase() %>"><%= tag %></button>
+                <% }); %>
+            <% } %>
+        </nav>
+
+        <!-- Book display list table -->
+        <table class="book-table">
+            <thead>
+                <tr>
+                    <th class="col-sr">Sr. No.</th>
+                    <th class="col-slug">Name of Book</th>
+                    <th class="col-tag">Tag</th>
+                </tr>
+            </thead>
+            <tbody id="bookListBody">
+                <% if (books && books.length) { %>
+                    <% books.forEach(function(book, index) { %>
+                        <tr 
+                            class="book-row" 
+                            data-index="<%= index + 1 %>" 
+                            data-tag="<%= (book.tag || '').toLowerCase() %>" 
+                            data-slug="<%= (book.slug || '').toLowerCase() %>"
+                        >
+                            <td class="col-sr"><%= index + 1 %></td>
+                            <td class="col-slug">
+                                <a 
+                                    href="/download/<%= encodeURIComponent(book.slug) %>" 
+                                    class="book-link" 
+                                    download="<%= book.slug %>.pdf"
+                                    title="Download <%= book.slug %>.pdf"
+                                >
+                                    <%= book.slug %>
+                                </a>
+                            </td>
+                            <td class="col-tag"><%= book.tag %></td>
+                        </tr>
+                    <% }); %>
+                <% } %>
+            </tbody>
+        </table>
+
+        <div id="noResults" class="no-results">No books found.</div>
     </div>
 
+    <script>
+        // Fuzzy search matching function for indexing, tag, and slug
+        function fuzzyMatch(pattern, text) {
+            if (!pattern) return true;
+            if (!text) return false;
+            pattern = pattern.toLowerCase().trim();
+            text = text.toLowerCase().trim();
+            if (text.includes(pattern)) return true;
+
+            let pIdx = 0;
+            let tIdx = 0;
+            while (pIdx < pattern.length && tIdx < text.length) {
+                if (pattern[pIdx] === text[tIdx]) {
+                    pIdx++;
+                }
+                tIdx++;
+            }
+            return pIdx === pattern.length;
+        }
+
+        const searchInput = document.getElementById('fuzzySearch');
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const rows = document.querySelectorAll('.book-row');
+        const noResults = document.getElementById('noResults');
+
+        let activeTag = 'all';
+
+        function filterList() {
+            const query = (searchInput.value || '').trim();
+            let visibleCount = 0;
+
+            rows.forEach(function(row) {
+                const rowIndex = row.dataset.index || '';
+                const rowTag = row.dataset.tag || '';
+                const rowSlug = row.dataset.slug || '';
+
+                // Category tab filtering
+                const matchesTag = (activeTag === 'all' || rowTag === activeTag);
+
+                // Fuzzy search matching by indexing (Sr. No.) or tag (or slug)
+                let matchesSearch = true;
+                if (query) {
+                    matchesSearch = fuzzyMatch(query, rowIndex) || 
+                                    fuzzyMatch(query, rowTag) || 
+                                    fuzzyMatch(query, rowSlug);
+                }
+
+                if (matchesTag && matchesSearch) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            if (noResults) {
+                noResults.style.display = (visibleCount === 0) ? 'block' : 'none';
+            }
+        }
+
+        // Fuzzy search event listener
+        searchInput.addEventListener('input', filterList);
+
+        // Linear tab bar event listeners
+        tabButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                tabButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                activeTag = this.dataset.tag;
+                filterList();
+            });
+        });
+    </script>
 </body>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
-
-</script>
-<script>
-    function downloadFile(slug) {
-
-// 1. Construct the path to the file inside the uploads folder
-const filePath = `uploads/${slug}.pdf`;
-
-// 2. Create a temporary anchor element
-const downloadLink = document.createElement('a');
-downloadLink.href = filePath;
-
-// 3. Force the browser to download instead of opening it in the PDF viewer
-downloadLink.download = `${sslug}.pdf`; 
-
-// 4. Append to body, trigger the click (works for touch events too), and remove
-document.body.appendChild(downloadLink);
-downloadLink.click();
-document.body.removeChild(downloadLink);
-
-}
-
-// Example usage:
-// downloadFile('Hello, world!', 'example.txt', 'text/plain');
-
-</script>
 </html>
