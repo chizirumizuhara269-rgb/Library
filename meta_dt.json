@@ -1,15 +1,56 @@
 {
-   "jgjj" : {
+    "b1": {
+        "slug": "effective-python-brett-slatkin",
+        "title": "Effective Python",
+        "description": "this is development",
+        "tag": "python"
+    },
+    "b2": {
+        "slug": "pythontricksbookbydanbader-1",
+        "title": "Python Tricks",
+        "description": "this is development",
+        "tag": "python"
+    },
+    "b3": {
+        "slug": "reactjs",
+        "title": "ReactJS",
+        "description": "this is development",
+        "tag": "js"
+    },
+    "b4": {
+        "slug": "descreat_math",
+        "title": "Discrete Mathematics",
+        "description": "this is development",
+        "tag": "math"
+    },
+    "b5": {
+        "slug": "dsa_roadmap",
+        "title": "DSA Roadmap",
+        "description": "this is development",
+        "tag": "dsa"
+    },
+    "b6": {
+        "slug": "oops",
+        "title": "OOPs",
+        "description": "this is development",
+        "tag": "python"
+    },
+    "b7": {
         "slug": "progit",
-        "title": "git of book",
+        "title": "Pro Git",
         "description": "this is development",
         "tag": "git"
     },
-    "hdf": {
-        "slug": "filename",
-        "title": "git of book",
+    "b8": {
+        "slug": "programming-data-structures-and-algorithms-using-python",
+        "title": "Programming Data Structures and Algorithms using Python",
         "description": "this is development",
-        "tag": "git"
+        "tag": "python"
+    },
+    "b9": {
+        "slug": "python-all-in-one",
+        "title": "Python All in One",
+        "description": "this is development",
+        "tag": "python"
     }
-
 }
