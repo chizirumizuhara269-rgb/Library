@@ -1,56 +1,94 @@
 {
     "b1": {
-        "slug": "effective-python-brett-slatkin",
+        "slug": "Effective-Python-Brett-Slatkin",
         "title": "Effective Python",
         "description": "this is development",
-        "tag": "python"
+        "tags": ["python", "advanced"]
     },
     "b2": {
-        "slug": "pythontricksbookbydanbader-1",
+        "slug": "python-tricks-bookby-dan-bader",
         "title": "Python Tricks",
         "description": "this is development",
-        "tag": "python"
+        "tags": ["python", "tricks"]
     },
     "b3": {
-        "slug": "reactjs",
+        "slug": "ReactJS",
         "title": "ReactJS",
         "description": "this is development",
-        "tag": "js"
+        "tags": ["js", "react", "frontend"]
     },
     "b4": {
         "slug": "descreat_math",
         "title": "Discrete Mathematics",
         "description": "this is development",
-        "tag": "math"
+        "tags": ["math", "dsa"]
     },
     "b5": {
         "slug": "dsa_roadmap",
         "title": "DSA Roadmap",
         "description": "this is development",
-        "tag": "dsa"
+        "tags": ["dsa", "roadmap", "interview"]
     },
     "b6": {
         "slug": "oops",
         "title": "OOPs",
         "description": "this is development",
-        "tag": "python"
+        "tags": ["oop", "python"]
     },
     "b7": {
         "slug": "progit",
         "title": "Pro Git",
         "description": "this is development",
-        "tag": "git"
+        "tags": ["git", "devops"]
     },
     "b8": {
         "slug": "programming-data-structures-and-algorithms-using-python",
         "title": "Programming Data Structures and Algorithms using Python",
         "description": "this is development",
-        "tag": "python"
+        "tags": ["python", "dsa", "beginner"]
     },
     "b9": {
         "slug": "python-all-in-one",
         "title": "Python All in One",
         "description": "this is development",
-        "tag": "python"
+        "tags": ["python", "beginner"]
+    },
+    "b10": {
+        "slug": "handwritten-dbms-notes",
+        "title": "Handwritten DBMS Notes",
+        "description": "handwritten notes for quick revision",
+        "tags": ["handwritten-notes", "dbms"],
+        "link": "https://example.com/handwritten-dbms-notes.pdf"
+    },
+    "b11": {
+        "slug": "system-design-interview",
+        "title": "System Design Interview",
+        "description": "system design handbook",
+        "tags": ["system-design", "interview"]
+    },
+    "b12": {
+        "slug": "intro-to-ml",
+        "title": "Introduction to Machine Learning",
+        "description": "ml basics with python",
+        "tags": ["ml", "ai", "python"],
+        "link": "https://example.com/intro-to-ml.pdf"
+    },
+    "b13": {
+        "slug": "java-handbook",
+        "title": "Java Handbook",
+        "description": "core java and oop",
+        "tags": ["java", "oop"]
+    },
+    "b14": {
+        "slug": "rust-programming",
+        "title": "Rust Programming",
+        "description": "systems programming with rust",
+        "tags": ["rust", "system"]
+    },
+    "b15": {
+        "slug": "computer-networks-notes",
+        "title": "Computer Networks - Handwritten Notes",
+        "description": "cn handwritten",
+        "tags": ["handwritten-notes", "cn"]
     }
 }

@@ -4,142 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Library</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: #ffffff;
-            color: #000000;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 40px 20px;
-        }
-
-        /* Aligned in middle of page with space on left and right */
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 15px;
-        }
-
-        h1 {
-            font-size: 26px;
-            font-weight: 700;
-            margin-top: 0;
-            margin-bottom: 24px;
-        }
-
-        /* Left-top option for fuzzy search */
-        .site-heading {
-            color: #000000;
-            font-weight: bold;
-            font-size: 28px;
-            text-align: left;
-            margin: 0 0 16px 0;
-        }
-
-        .search-container {
-            text-align: left;
-            margin-bottom: 20px;
-        }
-
-        .search-input {
-            width: 260px;
-            max-width: 100%;
-            padding: 8px 12px;
-            font-size: 14px;
-            border: 1px solid #000000;
-            background-color: #ffffff;
-            color: #000000;
-            outline: none;
-        }
-
-        .search-input:focus {
-            outline: 1px solid #000000;
-        }
-
-        /* Simple linear tab bar containing category tags */
-        .tab-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            border-bottom: 1px solid #000000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: #000000;
-            padding: 5px 12px;
-            font-size: 13px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .tab-btn:hover {
-            text-decoration: underline;
-        }
-
-        .tab-btn.active {
-            border: 1px solid #000000;
-            font-weight: bold;
-        }
-
-        /* Book display list table with aligned th, margin, and padding */
-        .book-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-
-        .book-table th {
-            text-align: left;
-            padding: 10px 14px;
-            border-bottom: 2px solid #000000;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .book-table td {
-            text-align: left;
-            padding: 10px 14px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 14px;
-        }
-
-        .col-sr {
-            width: 80px;
-        }
-
-        .col-slug {
-            width: auto;
-        }
-
-        .col-tag {
-            width: 120px;
-        }
-
-        /* Display list with black links that turn blue on hover */
-        .book-link {
-            color: #000000;
-            text-decoration: none;
-        }
-
-        .book-link:hover {
-            color: #0000ee;
-            text-decoration: underline;
-        }
-
-        .no-results {
-            display: none;
-            padding: 24px 14px;
-            font-size: 14px;
-        }
-    </style>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body>
 
@@ -151,7 +16,7 @@
                 type="text" 
                 id="fuzzySearch" 
                 class="search-input" 
-                placeholder="Fuzzy search by indexing or tag..." 
+                placeholder="Fuzzy search by name, tag..." 
                 autocomplete="off"
             />
         </div>
@@ -166,36 +31,51 @@
             <% } %>
         </nav>
 
-        <!-- Book display list table -->
+        <!-- Book display list table - no separate tag column, badges are on right side of name -->
         <table class="book-table">
             <thead>
                 <tr>
                     <th class="col-sr">Sr. No.</th>
-                    <th class="col-slug">Name of Book</th>
-                    <th class="col-tag">Tag</th>
+                    <th class="col-name">Name of Book</th>
                 </tr>
             </thead>
             <tbody id="bookListBody">
                 <% if (books && books.length) { %>
-                    <% books.forEach(function(book, index) { %>
+                    <% books.forEach(function(book, index) { 
+                        const tags = Array.isArray(book.tags) ? book.tags.slice(0,3) : (book.tag ? [book.tag] : []);
+                        const normalizedTags = tags.map(t => String(t).toLowerCase().trim()).filter(Boolean);
+                        const tagsStr = normalizedTags.join(' ');
+                        const hasLink = book.link && String(book.link).trim().length > 0;
+                        const href = hasLink ? String(book.link).trim() : '/download/' + encodeURIComponent(book.slug);
+                        const displayName = book.title || book.slug;
+                    %>
                         <tr 
                             class="book-row" 
                             data-index="<%= index + 1 %>" 
-                            data-tag="<%= (book.tag || '').toLowerCase() %>" 
+                            data-tags="<%= tagsStr %>" 
+                            data-tag="<%= normalizedTags[0] || '' %>"
                             data-slug="<%= (book.slug || '').toLowerCase() %>"
                         >
                             <td class="col-sr"><%= index + 1 %></td>
-                            <td class="col-slug">
-                                <a 
-                                    href="/download/<%= encodeURIComponent(book.slug) %>" 
-                                    class="book-link" 
-                                    download="<%= book.slug %>.pdf"
-                                    title="Download <%= book.slug %>.pdf"
-                                >
-                                    <%= book.slug %>
-                                </a>
+                            <td class="col-name">
+                                <div class="book-cell">
+                                    <div class="book-main">
+                                        <a 
+                                            href="<%= href %>" 
+                                            class="book-link" 
+                                            <% if (hasLink) { %> target="_blank" rel="noopener noreferrer" <% } else { %> download="<%= book.slug %>.pdf" <% } %>
+                                            title="<%= hasLink ? 'Open external link' : 'Download ' + book.slug + '.pdf' %>"
+                                        >
+                                            <%= displayName %><% if (hasLink) { %><span class="external-icon"> ↗</span><% } %>
+                                        </a>
+                                    </div>
+                                    <div class="badge-list">
+                                        <% normalizedTags.forEach(function(t) { %>
+                                            <span class="badge" data-tag="<%= t %>"><%= t %></span>
+                                        <% }); %>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="col-tag"><%= book.tag %></td>
                         </tr>
                     <% }); %>
                 <% } %>
@@ -238,17 +118,18 @@
 
             rows.forEach(function(row) {
                 const rowIndex = row.dataset.index || '';
-                const rowTag = row.dataset.tag || '';
+                const rowTags = row.dataset.tags || row.dataset.tag || '';
                 const rowSlug = row.dataset.slug || '';
 
-                // Category tab filtering
-                const matchesTag = (activeTag === 'all' || rowTag === activeTag);
+                // Category tab filtering - supports multiple tags
+                const tagList = rowTags.split(' ').filter(Boolean);
+                const matchesTag = (activeTag === 'all' || tagList.includes(activeTag));
 
                 // Fuzzy search matching by indexing (Sr. No.) or tag (or slug)
                 let matchesSearch = true;
                 if (query) {
                     matchesSearch = fuzzyMatch(query, rowIndex) || 
-                                    fuzzyMatch(query, rowTag) || 
+                                    fuzzyMatch(query, rowTags) || 
                                     fuzzyMatch(query, rowSlug);
                 }
 

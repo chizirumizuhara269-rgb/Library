@@ -13,15 +13,39 @@ async function build() {
 
   await mkdir(distDir, { recursive: true });
 
-  // Load books metadata
+  // Load books metadata with new schema (tags array max 3 + optional link)
   const metaPath = path.join(rootDir, 'meta_dt.json');
   const rawData = await readFile(metaPath, 'utf8');
   const books = JSON.parse(rawData);
-  const bookList = Object.values(books);
+  function normalizeTags(book) {
+    let tags = [];
+    if (Array.isArray(book.tags)) tags = book.tags;
+    else if (typeof book.tag === 'string' && book.tag.trim()) tags = [book.tag];
+    else if (typeof book.tags === 'string' && book.tags.trim()) tags = [book.tags];
+    return tags.map(t => String(t).trim().toLowerCase()).filter(Boolean).slice(0, 3);
+  }
+  const bookList = Object.values(books).map(b => ({
+    ...b,
+    tags: normalizeTags(b),
+    tag: normalizeTags(b)[0] || ''
+  }));
 
-  const defaultCategories = ['python', 'git', 'os', 'js', 'cn', 'c++', 'c', 'go'];
-  const dynamicTags = bookList.map(b => (b.tag || '').trim().toLowerCase()).filter(Boolean);
-  const allTags = Array.from(new Set([...defaultCategories, ...dynamicTags]));
+  const defaultCategories = [
+    'python','js','java','c','c++','go','rust','typescript',
+    'git','os','cn','dbms','dsa','oop','math',
+    'ml','ai','system-design','handwritten-notes','devops',
+    'react','frontend','interview','roadmap','beginner','advanced','system','tricks'
+  ];
+  const dynamicTags = bookList.flatMap(b => b.tags || []);
+  let allTags = Array.from(new Set([...defaultCategories, ...dynamicTags])).sort();
+  const prioritized = ['handwritten-notes'];
+  prioritized.forEach(p => {
+    if (allTags.includes(p)) {
+      const idx = allTags.indexOf(p);
+      allTags.splice(idx, 1);
+      allTags.unshift(p);
+    }
+  });
 
   // Render index.ejs to HTML
   const templatePath = path.join(rootDir, 'views', 'index.ejs');
@@ -60,6 +84,21 @@ async function build() {
     console.log(' -> public copied');
   } catch (e) {
     // public may be empty
+  }
+  // Ensure style.css is at dist root for absolute /style.css link (Express serves public/style.css as /style.css)
+  try {
+    await cp(path.join(rootDir, 'public', 'style.css'), path.join(distDir, 'style.css'));
+    console.log(' -> style.css copied to dist root');
+  } catch (e) {
+    // ignore
+  }
+
+  // Copy CNAME for custom domain (books.chizumizu.space) if present
+  try {
+    await cp(path.join(rootDir, 'CNAME'), path.join(distDir, 'CNAME'));
+    console.log(' -> CNAME copied');
+  } catch (e) {
+    console.warn('No CNAME to copy:', e.message);
   }
 
   // Copy public contents to dist root as well (if public has assets)

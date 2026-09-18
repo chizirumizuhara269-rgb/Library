@@ -1,0 +1,181 @@
+* { box-sizing: border-box; }
+
+body {
+    background-color: #ffffff;
+    color: #000000;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+/* Centered container */
+.container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+h1 { font-size: 26px; font-weight: 700; margin-top: 0; margin-bottom: 24px; }
+
+.site-heading {
+    color: #000000;
+    font-weight: bold;
+    font-size: 28px;
+    text-align: left;
+    margin: 0 0 16px 0;
+}
+
+.search-container { text-align: left; margin-bottom: 20px; }
+
+.search-input {
+    width: 260px;
+    max-width: 100%;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    color: #000000;
+    outline: none;
+}
+.search-input:focus { outline: 1px solid #000000; }
+
+/* Tag tabs */
+.tab-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #000000;
+    padding: 5px 12px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    border-radius: 999px;
+}
+.tab-btn:hover { text-decoration: underline; }
+.tab-btn.active {
+    border: 1px solid #000000;
+    font-weight: bold;
+    background: #f5f5f5;
+}
+
+/* Table */
+.book-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+.book-table th {
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid #000000;
+    font-size: 14px;
+    font-weight: 600;
+}
+.book-table td {
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1px solid #e0e0e0;
+    font-size: 14px;
+    vertical-align: middle;
+}
+.col-sr { width: 70px; }
+.col-name { width: auto; }
+
+/* Book name + badges layout */
+.book-cell {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+.book-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.book-link {
+    color: #000000;
+    text-decoration: none;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    line-height: 1.4;
+}
+.book-link:hover { color: #0000ee; text-decoration: underline; }
+.external-icon { font-size: 11px; margin-left: 4px; }
+
+/* Badges - colored capsules on right side */
+.badge-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 0;
+    align-items: center;
+    max-width: 220px;
+    justify-content: flex-end;
+}
+.badge {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    border: 1px solid rgba(0,0,0,0.08);
+    text-transform: lowercase;
+}
+/* Show only first 2 badges when name is long / always limit to 2 visible to keep table tidy.
+   All tags still count for filtering via data-tags. */
+.badge:nth-child(n+3) { display: none; }
+
+/* Badge colors */
+.badge[data-tag="python"] { background: #3776ab; color: #fff; }
+.badge[data-tag="js"] { background: #f7df1e; color: #000; }
+.badge[data-tag="java"] { background: #e76f00; color: #fff; }
+.badge[data-tag="c"] { background: #5c6bc0; color: #fff; }
+.badge[data-tag="c++"] { background: #00599c; color: #fff; }
+.badge[data-tag="go"] { background: #00acd7; color: #fff; }
+.badge[data-tag="rust"] { background: #dea584; color: #000; }
+.badge[data-tag="typescript"] { background: #3178c6; color: #fff; }
+.badge[data-tag="react"] { background: #61dafb; color: #000; }
+.badge[data-tag="frontend"] { background: #ff6b6b; color: #fff; }
+.badge[data-tag="git"] { background: #f05032; color: #fff; }
+.badge[data-tag="os"] { background: #6d4c41; color: #fff; }
+.badge[data-tag="cn"] { background: #009688; color: #fff; }
+.badge[data-tag="dbms"] { background: #7b1fa2; color: #fff; }
+.badge[data-tag="dsa"] { background: #43a047; color: #fff; }
+.badge[data-tag="math"] { background: #8d6e63; color: #fff; }
+.badge[data-tag="oop"] { background: #ad1457; color: #fff; }
+.badge[data-tag="ml"] { background: #6a1b9a; color: #fff; }
+.badge[data-tag="ai"] { background: #ec407a; color: #fff; }
+.badge[data-tag="handwritten-notes"] { background: #ffb74d; color: #000; border-color: #ff9800; }
+.badge[data-tag="system-design"] { background: #263238; color: #fff; }
+.badge[data-tag="interview"] { background: #37474f; color: #fff; }
+.badge[data-tag="roadmap"] { background: #00897b; color: #fff; }
+.badge[data-tag="devops"] { background: #1565c0; color: #fff; }
+.badge[data-tag="advanced"] { background: #1a237e; color: #fff; }
+.badge[data-tag="beginner"] { background: #a5d6a7; color: #000; }
+.badge[data-tag="tricks"] { background: #ffcc80; color: #000; }
+.badge[data-tag="system"] { background: #455a64; color: #fff; }
+/* Fallback for unknown tags */
+.badge[data-tag="default"] { background: #eeeeee; color: #000; }
+
+.no-results {
+    display: none;
+    padding: 24px 14px;
+    font-size: 14px;
+}
+
+/* Responsive: on small screens allow badges to wrap under name */
+@media (max-width: 560px) {
+    .book-cell { flex-direction: column; align-items: flex-start; }
+    .badge-list { justify-content: flex-start; max-width: 100%; }
+}

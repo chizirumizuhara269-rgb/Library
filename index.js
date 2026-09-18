@@ -58,17 +58,46 @@ app.get('/download/:slug', async (req, res) => {
     }
 });
 
+function normalizeTags(book) {
+    let tags = [];
+    if (Array.isArray(book.tags)) tags = book.tags;
+    else if (typeof book.tag === 'string' && book.tag.trim()) tags = [book.tag];
+    else if (typeof book.tags === 'string' && book.tags.trim()) tags = [book.tags];
+    return tags.map(t => String(t).trim().toLowerCase()).filter(Boolean).slice(0, 3);
+}
+
 app.get('/', async (req, res) => {
     try {
         const metaPath = path.join(__dirname, 'meta_dt.json');
         const rawData = await readFile(metaPath, 'utf8');
         const books = JSON.parse(rawData); 
-        const bookList = Object.values(books);
+        let bookList = Object.values(books).map(b => ({
+            ...b,
+            tags: normalizeTags(b),
+            // keep backward compat single tag
+            tag: normalizeTags(b)[0] || ''
+        }));
 
         // Collect unique tags from books and include common category tags requested
-        const defaultCategories = ['python', 'git', 'os', 'js', 'cn', 'c++', 'c', 'go'];
-        const dynamicTags = bookList.map(b => (b.tag || '').trim().toLowerCase()).filter(Boolean);
-        const allTags = Array.from(new Set([...defaultCategories, ...dynamicTags]));
+        const defaultCategories = [
+            'python','js','java','c','c++','go','rust','typescript',
+            'git','os','cn','dbms','dsa','oop','math',
+            'ml','ai','system-design','handwritten-notes','devops',
+            'react','frontend','interview','roadmap','beginner','advanced','system','tricks'
+        ];
+        const dynamicTags = bookList.flatMap(b => b.tags || []);
+        const allTags = Array.from(new Set([...defaultCategories, ...dynamicTags])).sort();
+
+        // Ensure handwritten-notes appears early/prominently
+        // Move it near front if not already
+        const prioritized = ['handwritten-notes'];
+        prioritized.forEach(p => {
+            if (allTags.includes(p)) {
+                const idx = allTags.indexOf(p);
+                allTags.splice(idx, 1);
+                allTags.unshift(p);
+            }
+        });
 
         res.render("index.ejs", { books: bookList, tags: allTags });
     } catch (error) {
